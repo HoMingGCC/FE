@@ -1,0 +1,48 @@
+@font-face {
+  font-family: 'YuhanKimberlyPureunsoop';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607101517@font-2/font-2/font-2-300.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'YuhanKimberlyPureunsoop';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607101517@font-2/font-2/font-2-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'YuhanKimberlyPureunsoop';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607101517@font-2/font-2/font-2-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-neutral-100 text-ink antialiased; }
+  button:focus-visible, a:focus-visible {
+    @apply outline-2 outline-offset-2 outline-mint;
+  }
+}
+
+@layer components {
+  .card { @apply rounded-xl border border-line bg-white p-3.5; }
+  .card-fill { @apply rounded-xl bg-fill p-3.5; }
+  .card-mint { @apply rounded-xl border border-mint-line bg-mint-light p-3.5; }
+
+  .btn { @apply w-full rounded-xl py-3.5 text-center text-[15px] font-semibold transition-colors; }
+  .btn-primary { @apply btn bg-mint text-white active:bg-[#00b493]; }
+  .btn-ghost { @apply btn border border-neutral-300 bg-white text-ink active:bg-neutral-50; }
+
+  .chip { @apply rounded-full px-3.5 py-1.5 text-[13px] transition-colors; }
+  .chip-on { @apply chip bg-mint text-white; }
+  .chip-off { @apply chip border border-line text-ink-sub; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
