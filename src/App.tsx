@@ -94,8 +94,8 @@ function Entry() {
   return (
     <Phone>
       <div className="flex flex-1 flex-col px-5 pb-8 pt-14">
-        <p className="text-[13px] font-semibold text-mint">HoMing</p>
-        <h1 className="mt-2 text-[22px] font-bold leading-snug">
+        <img src="/logo-homing-full.png" alt="HoMing" className="h-14 w-auto shrink-0 self-start object-contain"/>
+        <h1 className="mt-1 text-[22px] font-bold leading-snug">
           결제할 때마다 쌓이는
           <br />
           나만의 단골 지도

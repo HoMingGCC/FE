@@ -185,9 +185,7 @@ function PushResult({
 
           <div className="mt-8 rounded-2xl bg-[#DFF0D0]/90 p-3.5 backdrop-blur-sm">
             <div className="flex items-center gap-2">
-              <span className="flex size-6 items-center justify-center rounded-md bg-white text-[9px] font-bold text-mint">
-                iM
-              </span>
+              <img src="/logo-imbank.png" alt="" className="size-6 rounded-md bg-white object-contain p-0.5" />
               <span className="text-[12px] font-semibold">iM Bank</span>
             </div>
             <p className="mt-2 text-[13px] font-semibold">

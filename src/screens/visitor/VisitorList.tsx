@@ -28,7 +28,7 @@ export function VisitorList() {
   return (
     <Phone>
       <header className="flex shrink-0 items-center justify-between px-4 py-3.5">
-        <span className="text-[13px] font-semibold text-mint">HoMing</span>
+        <img src="/logo-homing.png" alt="HoMing" className="h-5 w-auto" />
         <h1 className="text-[15px] font-semibold">{ranking.districtName}</h1>
         <button onClick={() => nav('/')} aria-label="홈" className="-m-1 p-1">
           <Icon name="home" />

@@ -35,7 +35,7 @@
 
 @layer base {
   html { -webkit-tap-highlight-color: transparent; }
-  body { @apply bg-neutral-100 text-ink antialiased; }
+  body { @apply bg-neutral-100 font-sans text-ink antialiased; }
   button:focus-visible, a:focus-visible {
     @apply outline-2 outline-offset-2 outline-mint;
   }
