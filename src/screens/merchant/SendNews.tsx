@@ -1,3 +1,4 @@
+import { DemoHint } from '@/components/DemoHint'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Header, Phone } from '@/components/Layout'
@@ -143,6 +144,8 @@ export function SendNews() {
           노출 무료 · 결제 발생 시에만 과금
         </p>
       </div>
+
+      <DemoHint text="내용을 고르고 보내보세요" place="top" />
     </Phone>
   )
 }

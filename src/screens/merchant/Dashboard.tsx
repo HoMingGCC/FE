@@ -1,3 +1,4 @@
+import { DemoHint } from '@/components/DemoHint'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Header, Phone } from '@/components/Layout'
@@ -120,6 +121,7 @@ export function MerchantDashboard() {
           </>
         )}
       </div>
+      <DemoHint text="위 칩으로 가맹·미가맹을 비교해보세요" place="top" />
     </Phone>
   )
 }

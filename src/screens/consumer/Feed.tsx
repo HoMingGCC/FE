@@ -1,3 +1,4 @@
+import { DemoHint } from '@/components/DemoHint'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon, Phone, TabBar } from '@/components/Layout'
@@ -161,6 +162,7 @@ export function Feed() {
         })}
       </ul>
 
+      <DemoHint text="폐업 알림을 눌러보세요" />
       <TabBar />
     </Phone>
   )

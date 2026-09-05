@@ -21,9 +21,13 @@ export function DemoHint({
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    const t = setTimeout(() => setShow(true), delay)
-    return () => clearTimeout(t)
-  }, [delay])
+  const t = setTimeout(() => setShow(true), delay)
+  const hide = setTimeout(() => setShow(false), delay + 4000)
+  return () => {
+    clearTimeout(t)
+    clearTimeout(hide)
+  }
+}, [delay])
 
   if (!show) return null
 
@@ -33,7 +37,7 @@ export function DemoHint({
         place === 'top' ? 'top-20' : 'bottom-24'
       }`}
     >
-      <p className="animate-pulse rounded-full bg-black/75 px-4 py-2 text-[12px] font-medium text-white shadow-lg">
+      <p className="animate-pulse rounded-full bg-black/60 px-4 py-2 text-[12px] font-medium text-white shadow-lg">
         {text}
       </p>
     </div>

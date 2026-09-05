@@ -1,3 +1,4 @@
+import { DemoHint } from '@/components/DemoHint'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Header, Phone } from '@/components/Layout'
 import { useAppStore } from '@/store/useAppStore'
@@ -121,6 +122,14 @@ export function StoreDetail() {
           </button>
         )}
       </div>
+
+      <DemoHint
+        text={
+          closed
+            ? '비슷한 가게 찾기를 눌러보세요'
+            : '아래에서 리뷰를 남길 수 있어요'
+        }
+      />
     </Phone>
   )
 }

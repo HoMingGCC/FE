@@ -1,3 +1,4 @@
+import { DemoHint } from '@/components/DemoHint'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Icon, Phone } from '@/components/Layout'
@@ -139,6 +140,9 @@ export function VisitorList() {
             </div>
         </div>
         )}
+      {!modal && (
+        <DemoHint text="가게를 눌러 단골 근거를 확인해보세요" />
+      )}
     </Phone>
   )
 }
