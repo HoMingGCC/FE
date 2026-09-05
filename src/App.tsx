@@ -1,3 +1,5 @@
+import { SendNews } from '@/screens/merchant/SendNews'
+import { MerchantDashboard } from '@/screens/merchant/Dashboard'
 import { MyPage } from '@/screens/consumer/MyPage'
 import { Feed } from '@/screens/consumer/Feed'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
@@ -20,6 +22,8 @@ export default function App() {
       <Route path="/store/:regno" element={<StoreDetail />} />
       <Route path="/feed" element={<Feed />} />
       <Route path="/me" element={<MyPage />} />
+      <Route path="/merchant" element={<MerchantDashboard />} />
+      <Route path="/merchant/send" element={<SendNews />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
