@@ -12,6 +12,7 @@ export default {
       },
       fontFamily: {
         sans: ['YuhanKimberlyPureunsoop', '-apple-system', 'system-ui', 'sans-serif'],
+        shilla: ['Shilla', 'sans-serif'],
         },
     },
   },

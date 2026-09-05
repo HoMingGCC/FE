@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Header, Phone } from '@/components/Layout'
 import { useAppStore } from '@/store/useAppStore'
 import { fmtDate, fmtWon, remainingToRegular } from '@/lib/regular'
@@ -13,6 +13,7 @@ import { fmtDate, fmtWon, remainingToRegular } from '@/lib/regular'
  */
 export function StoreDetail() {
   const { regno } = useParams()
+  const nav = useNavigate()
   const r = useAppStore((s) => s.regulars.find((x) => x.store.regno === regno))
 
   if (!r) {
@@ -37,7 +38,12 @@ export function StoreDetail() {
       <Header title={closed ? '단골집 소식' : '단골 인증'} />
       <div className="flex-1 overflow-y-auto px-4 pb-8">
         {closed ? (
-          <ClosedNotice name={r.store.name} visits={r.visits} years={r.yearsSpan} closedAt={r.store.closedAt!} />
+          <ClosedNotice
+            name={r.store.name}
+            visits={r.visits}
+            years={r.yearsSpan}
+            closedAt={r.store.closedAt!}
+          />
         ) : r.isRegular ? (
           <div className="rounded-2xl bg-gradient-to-b from-mint to-[#00B896] px-5 py-7 text-center text-white">
             <div className="mx-auto flex size-[86px] items-center justify-center rounded-full border-[3px] border-lime">
@@ -89,19 +95,28 @@ export function StoreDetail() {
               <div
                 key={i}
                 className="flex-1 rounded-sm bg-mint"
-                style={{ height: `${Math.max(6, (v / max) * 100)}%`, opacity: v ? 1 : 0.2 }}
+                style={{
+                  height: `${Math.max(6, (v / max) * 100)}%`,
+                  opacity: v ? 1 : 0.2,
+                }}
               />
             ))}
           </div>
         </div>
 
         {r.isRegular && !closed && (
-          <button className="btn mt-6 bg-mint-light text-[14px] font-semibold text-mint">
+          <button
+            className="btn mt-6 bg-mint-light text-[14px] font-semibold text-mint"
+            onClick={() => nav('/community?write=1')}
+        >
             이 가게 리뷰 쓰기 (인증 단골만)
-          </button>
+        </button>
         )}
         {closed && (
-          <button className="btn-ghost mt-6 border-mint text-mint">
+          <button
+            className="btn-ghost mt-6 border-mint text-mint"
+            onClick={() => nav(`/substitute/${r.store.regno}`)}
+          >
             비슷한 {r.store.industry}점 찾아보기
           </button>
         )}

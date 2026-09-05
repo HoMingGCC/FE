@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon, Phone, TabBar } from '@/components/Layout'
+import { RegularAchieved } from '@/components/RegularAchieved'
 import { useAppStore } from '@/store/useAppStore'
 import { countBySource, fmtDate } from '@/lib/regular'
 import type { RegularStatus } from '@/types'
@@ -16,11 +17,17 @@ import type { RegularStatus } from '@/types'
 export function MapHome() {
   const nav = useNavigate()
   const [view, setView] = useState<'map' | 'list'>('map')
+  const [achieved, setAchieved] = useState(true)
   const { regulars, journey, ctx } = useAppStore()
 
   const counts = useMemo(() => countBySource(regulars), [regulars])
   const closed = regulars.filter((r) => r.store.status === 'closed').length
   const district = regulars[0]?.store.district ?? '대구'
+
+  // 축하 모달 대상 — 실서비스에서는 배치 결과에서 "이번에 새로 단골이 된 곳"
+  const newRegular = regulars.find(
+    (r) => r.isRegular && r.store.status === 'open',
+  )
 
   return (
     <Phone>
@@ -84,6 +91,11 @@ export function MapHome() {
       </div>
 
       <div className="h-3" />
+
+      {achieved && newRegular && (
+        <RegularAchieved item={newRegular} onClose={() => setAchieved(false)} />
+      )}
+
       <TabBar />
     </Phone>
   )
@@ -97,7 +109,6 @@ function MapCanvas({
   items: RegularStatus[]
   onPick: (r: RegularStatus) => void
 }) {
-  // 좌표를 화면 비율로 정규화
   const lats = items.map((r) => r.store.lat)
   const lngs = items.map((r) => r.store.lng)
   const minLat = Math.min(...lats)
@@ -107,7 +118,6 @@ function MapCanvas({
 
   return (
     <div className="relative flex-1 overflow-hidden bg-[#F2F2F2]">
-      {/* 도로 격자 */}
       <div
         className="absolute inset-0 opacity-70"
         style={{

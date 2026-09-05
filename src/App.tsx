@@ -1,29 +1,47 @@
-import { SendNews } from '@/screens/merchant/SendNews'
-import { MerchantDashboard } from '@/screens/merchant/Dashboard'
-import { MyPage } from '@/screens/consumer/MyPage'
-import { Feed } from '@/screens/consumer/Feed'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-import { Phone, TabBar } from '@/components/Layout'
+import { Phone } from '@/components/Layout'
 import { Consent, PeriodSelect } from '@/screens/consumer/Consent'
 import { Loading } from '@/screens/consumer/Loading'
 import { MapHome } from '@/screens/consumer/MapHome'
 import { StoreDetail } from '@/screens/consumer/StoreDetail'
+import { Substitute } from '@/screens/consumer/Substitute'
+import { Community } from '@/screens/consumer/Community'
+import { Feed } from '@/screens/consumer/Feed'
+import { MyPage } from '@/screens/consumer/MyPage'
+import { MerchantDashboard } from '@/screens/merchant/Dashboard'
+import { SendNews } from '@/screens/merchant/SendNews'
+import { VisitorList } from '@/screens/visitor/VisitorList'
+import { VisitorStore, Join } from '@/screens/visitor/VisitorStore'
 import { useAppStore } from '@/store/useAppStore'
-import type { Host } from '@/types'
+import type { Host, Role } from '@/types'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Entry />} />
+
+      {/* 온보딩 */}
       <Route path="/onboard/consent" element={<Consent />} />
       <Route path="/onboard/period" element={<PeriodSelect />} />
       <Route path="/onboard/loading" element={<Loading />} />
+
+      {/* 소비자 */}
       <Route path="/map" element={<MapHome />} />
       <Route path="/store/:regno" element={<StoreDetail />} />
+      <Route path="/substitute/:regno" element={<Substitute />} />
+      <Route path="/community" element={<Community />} />
       <Route path="/feed" element={<Feed />} />
       <Route path="/me" element={<MyPage />} />
+
+      {/* 사장님 */}
       <Route path="/merchant" element={<MerchantDashboard />} />
       <Route path="/merchant/send" element={<SendNews />} />
+
+      {/* 방문객 — VisitorList가 /visit/:regno 로 이동하므로 경로를 맞춘다 */}
+      <Route path="/visit" element={<VisitorList />} />
+      <Route path="/visit/:regno" element={<VisitorStore />} />
+      <Route path="/join" element={<Join />} />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
@@ -39,24 +57,33 @@ function Entry() {
   const nav = useNavigate()
   const setCtx = useAppStore((s) => s.setCtx)
 
-  const paths: Array<{ host: Host; title: string; desc: string; to: string }> = [
+  const paths: Array<{
+    host: Host
+    role: Role
+    title: string
+    desc: string
+    to: string
+  }> = [
     {
       host: 'imbank',
+      role: 'consumer',
       title: 'iM뱅크에서 진입',
       desc: '단골 지도 · 마이데이터 · 금융상품 전환',
       to: '/onboard/consent',
     },
     {
       host: 'imshop',
+      role: 'merchant',
       title: 'iM샵에서 진입',
-      desc: '지역화폐 결제 이력으로 동의 없이 바로',
-      to: '/map',
+      desc: '사장님 모드 · 단골 현황 · 소식 보내기',
+      to: '/merchant',
     },
     {
       host: 'web',
+      role: 'consumer',
       title: 'QR · 링크로 진입',
       desc: '가입 없이 단골 보증 리스트 열람',
-      to: '/map',
+      to: '/visit',
     },
   ]
 
@@ -79,9 +106,9 @@ function Entry() {
         <div className="mt-2.5 space-y-2.5">
           {paths.map((p) => (
             <button
-              key={p.host}
+              key={p.title}
               onClick={() => {
-                setCtx({ host: p.host })
+                setCtx({ host: p.host, activeRole: p.role })
                 nav(p.to)
               }}
               className="w-full rounded-xl border border-line px-4 py-3.5 text-left active:bg-neutral-50"
@@ -98,20 +125,6 @@ function Entry() {
           데모용 진입점 선택 · 실서비스에서는 자동 판별됩니다
         </p>
       </div>
-    </Phone>
-  )
-}
-
-function Placeholder({ title }: { title: string }) {
-  return (
-    <Phone>
-      <header className="px-4 py-3.5">
-        <h1 className="text-[17px] font-semibold">{title}</h1>
-      </header>
-      <div className="flex flex-1 items-center justify-center">
-        <p className="text-[13px] text-ink-mute">준비 중</p>
-      </div>
-      <TabBar />
     </Phone>
   )
 }
