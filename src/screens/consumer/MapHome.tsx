@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon, Phone, TabBar } from '@/components/Layout'
+import { KakaoMap } from '@/components/KakaoMap'
 import { RegularAchieved } from '@/components/RegularAchieved'
+import { DemoHint } from '@/components/DemoHint'
 import { useAppStore } from '@/store/useAppStore'
 import { countBySource, fmtDate } from '@/lib/regular'
 import type { RegularStatus } from '@/types'
@@ -10,9 +12,8 @@ import type { RegularStatus } from '@/types'
  * 나의 단골 지도 (홈)
  *
  * 핀에 방문 횟수를 직접 얹는 게 이 화면의 정체성.
- * "내가 쓴 돈으로 그려진 지도"라는 인상이 첫눈에 와야 한다.
- *
- * 지도는 지금 목업. 카카오맵 SDK 붙일 때 <MapCanvas>만 교체하면 된다.
+ * 지도를 헤더 아래부터 하단탭 위까지 꽉 채우고, 토글·배너·요약은 그 위에 띄운다.
+ * 오버레이 컨테이너는 pointer-events-none 이라 빈 곳에서도 지도를 끌 수 있다.
  */
 export function MapHome() {
   const nav = useNavigate()
@@ -24,10 +25,11 @@ export function MapHome() {
   const closed = regulars.filter((r) => r.store.status === 'closed').length
   const district = regulars[0]?.store.district ?? '대구'
 
-  // 축하 모달 대상 — 실서비스에서는 배치 결과에서 "이번에 새로 단골이 된 곳"
   const newRegular = regulars.find(
     (r) => r.isRegular && r.store.status === 'open',
   )
+
+  const isMap = view === 'map'
 
   return (
     <Phone>
@@ -43,108 +45,83 @@ export function MapHome() {
         </button>
       </header>
 
-      <div className="flex shrink-0 gap-1.5 px-4 pb-2.5">
-        <button
-          className={view === 'map' ? 'chip-on' : 'chip-off'}
-          onClick={() => setView('map')}
-        >
-          지도 보기
-        </button>
-        <button
-          className={view === 'list' ? 'chip-on' : 'chip-off'}
-          onClick={() => setView('list')}
-        >
-          목록 보기
-        </button>
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        {isMap ? (
+          <KakaoMap
+            items={regulars}
+            onPick={(r) => nav(`/store/${r.store.regno}`)}
+          />
+        ) : (
+          <StoreList
+            items={regulars}
+            onPick={(r) => nav(`/store/${r.store.regno}`)}
+          />
+        )}
+
+        {/* 상단 오버레이 — 토글 + 금융 여정 */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 space-y-2.5 p-4">
+          <div className="pointer-events-auto flex gap-1.5">
+            <button
+              className={
+                isMap ? 'chip-on shadow-sm' : 'chip-off bg-white shadow-sm'
+              }
+              onClick={() => setView('map')}
+            >
+              지도 보기
+            </button>
+            <button
+              className={
+                !isMap ? 'chip-on shadow-sm' : 'chip-off bg-white shadow-sm'
+              }
+              onClick={() => setView('list')}
+            >
+              목록 보기
+            </button>
+          </div>
+
+          {isMap && (
+            <button
+              onClick={() => nav('/feed')}
+              className="pointer-events-auto w-full rounded-xl bg-mint-light/95 px-3.5 py-3 text-left shadow-sm backdrop-blur-sm"
+            >
+              <span className="block text-[11px] text-[#4A8A7A]">
+                나의 금융 여정
+              </span>
+              <span className="mt-0.5 block text-[14px] font-semibold text-mint">
+                지금은 {journey.label} 단계예요
+              </span>
+              <span className="mt-0.5 block text-[11px] text-ink-sub">
+                {journey.products[0]} 알아보기 ›
+              </span>
+            </button>
+          )}
+        </div>
+
+        {/* 하단 오버레이 — 요약 */}
+        {isMap && (
+          <div className="pointer-events-none absolute inset-x-4 bottom-4 z-10 rounded-xl bg-white/95 p-3.5 shadow-lg backdrop-blur-sm">
+            <p className="text-[12px] text-ink-sub">복원된 단골</p>
+            <p className="mt-0.5 text-[18px] font-bold text-mint">
+              {counts.total}곳 · {ctx.homeRegion === 'pohang' ? '포항' : '대구'}{' '}
+              {district}
+            </p>
+            <p className="mt-1 text-[12px] text-ink-mute">
+              지역화폐 {counts.localpay}곳 · 카드 {counts.card}곳
+              {closed > 0 && ` · 폐업 ${closed}곳`}
+            </p>
+          </div>
+        )}
       </div>
-
-      {/* 금융 여정 배너 — 틀은 범용, 값만 개인화 */}
-      <button
-        onClick={() => nav('/feed')}
-        className="mx-4 mb-2.5 flex shrink-0 items-center justify-between rounded-xl border border-mint-line bg-mint-light px-3.5 py-3 text-left"
-      >
-        <span>
-          <span className="block text-[11px] text-[#4A8A7A]">나의 금융 여정</span>
-          <span className="mt-0.5 block text-[14px] font-semibold text-mint">
-            지금은 {journey.label} 단계예요
-          </span>
-        </span>
-        <Icon name="right" className="text-mint" />
-      </button>
-
-      {view === 'map' ? (
-        <MapCanvas items={regulars} onPick={(r) => nav(`/store/${r.store.regno}`)} />
-      ) : (
-        <StoreList items={regulars} onPick={(r) => nav(`/store/${r.store.regno}`)} />
-      )}
-
-      <div className="mx-4 -mt-3 shrink-0 rounded-xl bg-white p-3.5 shadow-[0_-1px_10px_rgba(0,0,0,0.06)]">
-        <p className="text-[12px] text-ink-sub">복원된 단골</p>
-        <p className="mt-0.5 text-[18px] font-bold text-mint">
-          {counts.total}곳 · {ctx.homeRegion === 'pohang' ? '포항' : '대구'}{' '}
-          {district}
-        </p>
-        <p className="mt-1 text-[12px] text-ink-mute">
-          지역화폐 {counts.localpay}곳 · 카드 {counts.card}곳
-          {closed > 0 && ` · 폐업 ${closed}곳`}
-        </p>
-      </div>
-
-      <div className="h-3" />
 
       {achieved && newRegular && (
         <RegularAchieved item={newRegular} onClose={() => setAchieved(false)} />
       )}
+      {!achieved && isMap && (
+        <DemoHint text="핀을 눌러 단골 인증을 확인해보세요" />
+      )}
 
       <TabBar />
     </Phone>
-  )
-}
-
-/** 지도 목업 — 카카오맵 SDK 연동 시 이 컴포넌트만 교체 */
-function MapCanvas({
-  items,
-  onPick,
-}: {
-  items: RegularStatus[]
-  onPick: (r: RegularStatus) => void
-}) {
-  const lats = items.map((r) => r.store.lat)
-  const lngs = items.map((r) => r.store.lng)
-  const minLat = Math.min(...lats)
-  const maxLat = Math.max(...lats)
-  const minLng = Math.min(...lngs)
-  const maxLng = Math.max(...lngs)
-
-  return (
-    <div className="relative flex-1 overflow-hidden bg-[#F2F2F2]">
-      <div
-        className="absolute inset-0 opacity-70"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 3px, transparent 3px), linear-gradient(90deg, #fff 3px, transparent 3px)',
-          backgroundSize: '54px 68px',
-        }}
-        aria-hidden
-      />
-      {items.map((r) => {
-        const x = 10 + ((r.store.lng - minLng) / (maxLng - minLng || 1)) * 68
-        const y = 12 + (1 - (r.store.lat - minLat) / (maxLat - minLat || 1)) * 70
-        const isClosed = r.store.status === 'closed'
-        return (
-          <button
-            key={r.store.regno}
-            onClick={() => onPick(r)}
-            className={`absolute -translate-x-1/2 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-medium shadow-sm ${
-              isClosed ? 'bg-neutral-400 text-white' : 'bg-mint text-white'
-            }`}
-            style={{ left: `${x}%`, top: `${y}%` }}
-          >
-            {r.store.industry} {isClosed ? '폐업' : `${r.visits}회`}
-          </button>
-        )
-      })}
-    </div>
   )
 }
 
@@ -160,7 +137,7 @@ function StoreList({
     { label: '생활', keys: ['life'] },
   ]
   return (
-    <div className="flex-1 overflow-y-auto px-4 pb-4">
+    <div className="flex-1 overflow-y-auto px-4 pb-4 pt-16">
       {groups.map((g) => {
         const rows = items.filter((r) => g.keys.includes(r.store.category))
         if (!rows.length) return null

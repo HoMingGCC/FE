@@ -58,34 +58,38 @@ function Entry() {
   const setCtx = useAppStore((s) => s.setCtx)
 
   const paths: Array<{
-    host: Host
-    role: Role
-    title: string
-    desc: string
-    to: string
-  }> = [
-    {
-      host: 'imbank',
-      role: 'consumer',
-      title: 'iM뱅크에서 진입',
-      desc: '단골 지도 · 마이데이터 · 금융상품 전환',
-      to: '/onboard/consent',
-    },
-    {
-      host: 'imshop',
-      role: 'merchant',
-      title: 'iM샵에서 진입',
-      desc: '사장님 모드 · 단골 현황 · 소식 보내기',
-      to: '/merchant',
-    },
-    {
-      host: 'web',
-      role: 'consumer',
-      title: 'QR · 링크로 진입',
-      desc: '가입 없이 단골 보증 리스트 열람',
-      to: '/visit',
-    },
-  ]
+  host: Host
+  role: Role
+  title: string
+  desc: string
+  to: string
+  icon: string
+}> = [
+  {
+    host: 'imbank',
+    role: 'consumer',
+    title: 'iM뱅크에서 진입',
+    desc: '단골 지도 · 마이데이터 · 금융상품 전환',
+    to: '/onboard/consent',
+    icon: '/logo-imbank.png',
+  },
+  {
+    host: 'imshop',
+    role: 'merchant',
+    title: 'iM샵에서 진입',
+    desc: '사장님 모드 · 단골 현황 · 소식 보내기',
+    to: '/merchant',
+    icon: '/logo-imshop.png',
+  },
+  {
+    host: 'web',
+    role: 'consumer',
+    title: 'QR · 링크로 진입',
+    desc: '가입 없이 단골 보증 리스트 열람',
+    to: '/visit',
+    icon: '/qr-seomun.png',
+  },
+]
 
   return (
     <Phone>
@@ -106,18 +110,24 @@ function Entry() {
         <div className="mt-2.5 space-y-2.5">
           {paths.map((p) => (
             <button
-              key={p.title}
-              onClick={() => {
-                setCtx({ host: p.host, activeRole: p.role })
-                nav(p.to)
-              }}
-              className="w-full rounded-xl border border-line px-4 py-3.5 text-left active:bg-neutral-50"
-            >
-              <span className="block text-[14px] font-semibold">{p.title}</span>
-              <span className="mt-1 block text-[12px] text-ink-mute">
-                {p.desc}
-              </span>
-            </button>
+                key={p.title}
+                onClick={() => {
+                    setCtx({ host: p.host, activeRole: p.role })
+                    nav(p.to)
+                }}
+                className="flex w-full items-center gap-3.5 rounded-xl border border-line px-4 py-3.5 text-left active:bg-neutral-50"
+                >
+                <img
+                    src={p.icon}
+                    alt=""
+                    className="size-11 shrink-0 rounded-lg object-cover"
+                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                />
+                <span className="min-w-0 flex-1">
+                    <span className="block text-[14px] font-semibold">{p.title}</span>
+                    <span className="mt-1 block text-[12px] text-ink-mute">{p.desc}</span>
+                </span>
+                </button>
           ))}
         </div>
 
